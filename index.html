@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lit Tally App</title>
+  <script type="module">
+    import { LitElement, html, css } from 'https://unpkg.com/lit@2.0.0/index.js?module';
+
+    class TallyApp extends LitElement {
+      static properties = {
+        count: { type: Number },
+        state: { type: String },
+        minCount: { type: Number },
+        maxCount: { type: Number }
+      };
+
+      constructor() {
+        super();
+        this.count = 0;
+        this.minCount = 0;
+        this.maxCount = 10;
+        this.state = 'Normal';
+      }
+
+      static styles = css`
+        .counter {
+          font-size: 2em;
+          margin: 20px 0;
+        }
+        .normal {
+          color: black;
+        }
+        .min-reached {
+          color: red;
+        }
+        .max-reached {
+          color: green;
+        }
+      `;
+
+      updateState() {
+        if (this.count === this.minCount) {
+          this.state = 'Minimum Reached';
+        } else if (this.count === this.maxCount) {
+          this.state = 'Maximum Reached';
+        } else {
+          this.state = 'Normal';
+        }
+      }
+
+      increment() {
+        if (this.count < this.maxCount) {
+          this.count += 1;
+          this.updateState();
+        }
+      }
+
+      decrement() {
+        if (this.count > this.minCount) {
+          this.count -= 1;
+          this.updateState();
+        }
+      }
+
+      reset() {
+        this.count = 0;
+        this.updateState();
+      }
+
+      render() {
+        return html`
+          <div>
+            <div class="counter ${this.state === 'Normal' ? 'normal' : this.state === 'Minimum Reached' ? 'min-reached' : 'max-reached'}">
+              Count: ${this.count}
+            </div>
+            <button @click="${this.increment}">Add</button>
+            <button @click="${this.decrement}">Subtract</button>
+            <button @click="${this.reset}">Reset</button>
+            <div>State: ${this.state}</div>
+          </div>
+        `;
+      }
+    }
+
+    customElements.define('tally-app', TallyApp);
+  </script>
+</head>
+<body>
+  <tally-app></tally-app>
+</body>
+</html>
